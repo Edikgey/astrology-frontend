@@ -1,0 +1,559 @@
+
+
+/* Общий контейнер */
+.home-container {
+    width: 100%;
+    margin: 0 auto;
+    padding: 0;
+    text-align: center;
+    font-family: 'Arial', sans-serif;
+    background-color: #f5f3fe;
+}
+
+
+
+/* 🔹 ГЕРОЙ-СЕКЦИЯ */
+.hero-section {
+    background-image: url('../img/unnamed.png'); /* Укажи правильный путь */
+    background-size: cover; /* Растягиваем фон, чтобы он заполнял всю ширину */
+    background-position: center; /* Центрируем */
+    background-repeat: no-repeat;
+    background-attachment: scroll; /* Убираем фиксированный фон */
+    
+    width:  100%;
+    
+    min-height: 100vh; /* Высота на весь экран */
+    
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    text-align: center;
+    padding: 60px 0px;
+    margin: 0;
+    overflow: hidden; /* Убираем любые возможные боковые отступы */
+}
+
+
+
+.hero h1 {
+    
+    font-size: 36px;
+    font-weight: bold;
+    color:#3d1c56;;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5)
+}
+
+.hero p {
+    max-width: 600px;
+    margin: 10px auto;
+    font-size: 18px;
+    color:#3d1c56;;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5)
+}
+
+.start-button {
+    background-color: #d6b3ff;
+    color: #3d1c56;
+    border: none;
+    padding: 12px 24px;
+    font-size: 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s ease;
+    margin-top: 20px;
+}
+
+.start-button:hover {
+    background-color: #c292f2;
+}
+    
+
+
+
+
+
+
+/* 🔹 ВТОРАЯ СЕКЦИЯ С РАЗДЕЛИТЕЛЯМИ */
+/* Общий контейнер */
+.stats-section {
+    margin-top: 0; /* Убрал лишний отступ сверху */
+    padding: 60px 20px 100px; /* Отступы внутри секции */
+    background: rgba(242,243,255,255);
+    position: relative;
+}
+
+/* 🔹 Разделительные линии сверху и снизу */
+.stats-section::before,
+.stats-section::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: rgba(183,117,248,255);
+}
+
+.stats-section::before {
+    top: -3px; /* Поднял ровно в упор */
+}
+
+.stats-section::after {
+    bottom: 0; /* Оставил ровно в упор вниз */
+}
+.stats-section::before {
+    top: 0; /* Выровнял линию ровно вверх */
+}
+
+.stats-section::after {
+    bottom: 0; /* Выровнял линию ровно вниз */
+}
+
+/* 🔹 Заголовок */
+.stats-section h2 {
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 15px; /* Поднял заголовок */
+    color: #3d1c56;
+}
+
+/* 🔹 Подзаголовок */
+.stats-section p {
+    font-size: 18px;
+    max-width: 650px;
+    margin: 0 auto 40px; /* Сделал отступ чуть меньше */
+    color: rgba(153,63,235,255);
+}
+
+.stats-section p span{
+    color:#3d1c56;;
+}
+
+/* 🔹 Грид с карточками */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    justify-content: center;
+    max-width: 900px;
+    margin: auto;
+}
+
+/* 🔹 Карточки */
+.stats-card {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: left;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    height: 110px; /* Уменьшенная высота */
+}
+
+.stats-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+/* 🔹 Текст в карточках */
+.stats-percentage {
+    font-size: 22px;
+    font-weight: bold;
+    color: rgba(147,51,234,255);
+    margin-bottom: 5px; /* Одинаковый отступ сверху */
+}
+
+.stats-title {
+    color:#581c87;
+}
+
+.stats-subtitle {
+    color:#8753db;
+}
+
+.stats-text {
+    font-size: 14px;
+    color: rgba(153,63,235,255);
+    line-height: 1.2;
+}
+
+/* 🔹 Нижний текст */
+.stats-footer {
+    margin-top: 80px !important; /* Опустил вниз */
+    line-height: 1.8;
+    font-size: 18px;
+
+    font-weight: bold;
+}
+
+
+
+
+
+
+
+/* 🔹 Секция тарифов */
+.pricing-section {
+    background-color:#ffffff;
+    text-align: center;
+    padding: 80px 20px;
+    color: black;
+}
+
+.money-back {
+    background: #f3f3ff;
+    display: inline-block;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: black;
+}
+
+/* Заголовок и подзаголовок */
+.pricing-title {
+    font-size: 32px;
+    font-weight: bold;
+    color: black;
+}
+
+.pricing-subtitle {
+    font-size: 18px;
+    color: black;
+    margin-bottom: 40px;
+}
+
+/* Грид с тарифами */
+.pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    max-width: 1100px;
+    margin: auto;
+    align-items: stretch; /* Делаем карточки одинаковой высоты */
+}
+
+/* Карточки тарифов */
+.pricing-card {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: left; /* Текст теперь слева */
+    color: black;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Равномерное распределение */
+}
+
+/* Выровняем текст внутри карточек */
+.plan-name {
+    font-family: Roboto;
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.price {
+    font-family: Roboto;
+    font-size: 28px;
+    font-weight: bold;
+    color: black;
+}
+
+
+/* Кнопки */
+.outline-button, .filled-button {
+    border: 2px solid rgba(147,51,234,255);
+    padding: 12px;
+    border-radius: 8px;
+    width: 100%;
+    color: rgba(147,51,234,255);
+    text-align: center;
+    font-weight: bold;
+    margin-top: auto; /* Чтобы кнопки всегда были внизу */
+}
+
+.filled-button {
+    background: rgba(147,51,234,255);
+    color: white;
+}
+
+/* Стили заголовков вместо тегов */
+.purple-text {
+    color: rgba(147,51,234,255);
+    font-weight: bold;
+    font-size: 14px;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.green-text {
+    color: #28a745;
+    font-weight: bold;
+    font-size: 14px;
+    text-align: left;
+    margin-bottom: 10px;
+}
+
+.discount {
+    color:#28a745;
+}
+
+/* Список преимуществ */
+/* Нижний текст внутри карточек */
+.features-list {
+    font-size: 12px;
+    text-align: left; /* Выравнивание текста по левому краю */
+    padding: 0 auto ; /* Отступы от краев карточки */
+    margin-top: 15px; /* Дополнительный отступ сверху */
+    line-height: 2; /* Увеличенный межстрочный интервал */
+}
+
+
+
+
+/* Описание отмены */
+.cancel-text {
+    font-size: 12px;
+    color: gray;
+    margin-top: 10px;
+}
+
+
+/* Зеленая тень и контур для "Годового" плана */
+.pricing-card.best-value {
+    
+    border: 2px solid rgba(40, 167, 69, 1); /* Зеленый контур */
+}
+
+.pricing-card.best-value .outline-button {
+    background-color: #28a745; /* Зеленый фон */
+    color: white; /* Белый текст */
+    border: 2px solid #28a745; /* Зеленая рамка */
+}
+
+.pricing-card.popular {
+    border: 2px solid rgba(147,51,234,255); /* Фиолетовый контур */
+}
+
+
+
+
+
+
+/* Общий стиль секции */
+.faq-section {
+    background: rgba(242, 243, 255, 255);
+    padding: 60px 20px;
+    position: relative;
+}
+
+/* Разделительные линии сверху и снизу */
+.faq-section::before,
+.faq-section::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: rgba(183, 117, 248, 255);
+}
+
+.faq-section::before {
+    top: 0;
+}
+
+.faq-section::after {
+    bottom: 0;
+}
+
+/* Заголовок секции */
+.faq-title {
+    text-align: center;
+    font-size: 28px;
+    font-weight: bold;
+    color: #6a1b9a;
+    margin-bottom: 20px;
+}
+
+/* Контейнер для вопросов */
+.faq-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* Вопрос */
+.faq-item {
+    background: white;
+    color: rgb(107 33 168);
+    padding: 15px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    text-align: left;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease-in-out;
+
+}
+
+/* Когда ответ открыт, панель плавно расширяется */
+.faq-item.open {
+    padding-bottom: 0;
+}
+
+.faq-question {
+    color:rgb(107 33 168);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    padding-bottom: 20px;
+}
+
+/* Ответ теперь встроен в блок вопроса */
+.faq-answer {
+    font-family: Roboto;
+    font-weight: normal;
+    padding: 0 15px 15px;
+    font-size: 17px;
+    color: rgb(126 34 206 );
+    overflow: hidden;
+    max-height: 1000px;
+    transition: max-height 0.3s ease-in-out;
+}
+
+.faq-item.open .faq-answer {
+    max-height: 1500px;
+}
+
+.faq-item.open .faq-answer {
+    max-height: none; /* Убираем ограничение */
+    height: auto; /* Позволяем контенту расширяться */
+    overflow: visible; /* Убедимся, что текст не обрезается */
+}
+
+
+
+
+
+
+/* Секция видео */
+/* Секция видео */
+.video-gallery {
+    padding: 40px 20px;
+    background-color: #f9f9f9;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+/* Контейнер для рядов видео */
+.video-row {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    max-width: 1100px;
+    width: 100%;
+}
+
+/* Видео-блок */
+.video-item {
+    width: 30%;
+    max-width: 320px;
+    text-align: center;
+    background: white;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+/* Видео-обёртка */
+.video-wrapper {
+    position: relative;
+    width: 100%;
+    cursor: pointer;
+}
+
+/* Видео */
+.video-item video {
+    width: 100%;
+    border-radius: 8px;
+}
+
+/* Кнопка Play по центру */
+/* Кнопка Play */
+.play-button {
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: none; /* Убираем фон */
+    color: white;
+    border: none;
+    width: 50px;
+    height: 50px;
+    font-size: 50px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.3s ease;
+}
+
+/* Убираем фон и делаем кнопку прозрачной */
+.play-button:hover {
+    opacity: 0.8;
+}
+
+
+/* Описание видео */
+.video-item p {
+    text-align: left;
+    margin-top: 10px;
+    font-size: 16px;
+    color: #333;
+}
+
+/* Адаптивность */
+@media (max-width: 1024px) {
+    .video-item {
+        width: 45%;
+    }
+}
+
+@media (max-width: 768px) {
+    .video-item {
+        width: 100%;
+    }
+
+    .video-row {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+
+/* Скрываем контролы (панель управления видео) до старта */
+.video-item video::-webkit-media-controls {
+    display: none !important;
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Когда видео запущено – показываем панель управления */
+.video-item.playing video::-webkit-media-controls {
+    display: flex !important;
+    opacity: 1;
+    pointer-events: auto;
+}
+
+
