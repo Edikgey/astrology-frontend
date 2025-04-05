@@ -191,3 +191,4 @@ const NatalChart = ({ chartId, bodies, aspects, pointsData, patterns, structured
 };
 
 export default NatalChart;
+
