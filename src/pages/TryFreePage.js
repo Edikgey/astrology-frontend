@@ -1,18 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import Joi from "joi";
 import "./TryFreePage.css";
 
 const years = Array.from({ length: new Date().getFullYear() - 1899 }, (_, i) => 1900 + i);
-const months = [
-  "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"
-];
+const months = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"];
 const days = Array.from({ length: 31 }, (_, i) => i + 1);
 const hours = Array.from({ length: 24 }, (_, i) => (i < 10 ? "0" + i : "" + i));
 const minutes = Array.from({ length: 60 }, (_, i) => (i < 10 ? "0" + i : "" + i));
 
-// 🔄 ОБНОВЛЁННАЯ ФУНКЦИЯ
 const calculateNatalChart = async (formData, token = null) => {
   try {
     const monthIndex = months.indexOf(formData.month) + 1;
@@ -34,24 +30,19 @@ const calculateNatalChart = async (formData, token = null) => {
       "Content-Type": "application/json",
     };
 
-    // 💡 Точный токен
     if (token && token !== "null") {
       headers["Authorization"] = `Bearer ${token}`;
     } else {
-      // 👤 Гость
       let sessionToken = localStorage.getItem("session_token");
       if (!sessionToken) {
         sessionToken = crypto.randomUUID();
         localStorage.setItem("session_token", sessionToken);
       }
-
-      // 👈 Вставляем в тело запроса
       payload.session_token = sessionToken;
     }
 
-    // 🚨 Отладка:
     console.log("📦 Payload перед отправкой:", payload);
-    console.log("📩 Headers перед отправкой:", headers);
+    console.log("📩 Headers:", headers);
 
     const response = await fetch("https://astrologywebapp-production.up.railway.app/natal-chart", {
       method: "POST",
@@ -72,8 +63,6 @@ const calculateNatalChart = async (formData, token = null) => {
     return null;
   }
 };
-
-
 
 const TryFreePage = () => {
   const { user } = useAuth();
@@ -149,13 +138,12 @@ const TryFreePage = () => {
   };
 
   const convertToJulian = (year, monthName, day, hour, minute) => {
-    const months = [
+    const engMonths = [
       'January', 'February', 'March', 'April', 'May', 'June',
       'July', 'August', 'September', 'October', 'November', 'December'
     ];
-
     const y = parseInt(year);
-    const m = months.indexOf(monthName) + 1;
+    const m = engMonths.indexOf(monthName) + 1;
     const d = parseInt(day);
     const h = parseInt(hour);
     const min = parseInt(minute);
@@ -187,7 +175,13 @@ const TryFreePage = () => {
     const monthIndex = months.indexOf(updatedFormData.month) + 1;
     const selectedDate = `${String(updatedFormData.year).padStart(4, "0")}-${String(monthIndex).padStart(2, "0")}-${String(updatedFormData.day).padStart(2, "0")}`;
     const selectedTime = `${String(updatedFormData.hour).padStart(2, "0")}:${String(updatedFormData.minute).padStart(2, "0")}`;
-    const julianDate = convertToJulian(updatedFormData.year, updatedFormData.month, updatedFormData.day, updatedFormData.hour, updatedFormData.minute);
+    const julianDate = convertToJulian(
+      updatedFormData.year,
+      updatedFormData.month,
+      updatedFormData.day,
+      updatedFormData.hour,
+      updatedFormData.minute
+    );
 
     const finalData = {
       ...updatedFormData,
@@ -200,7 +194,10 @@ const TryFreePage = () => {
 
     localStorage.setItem("tempUserData", JSON.stringify(finalData));
 
-    const result = await calculateNatalChart(finalData, localStorage.getItem("access_token"));
+    let rawToken = localStorage.getItem("access_token");
+    const token = rawToken === "null" || !rawToken ? null : rawToken;
+
+    const result = await calculateNatalChart(finalData, token);
 
     if (!result) {
       alert("Произошла ошибка при расчёте натальной карты");
