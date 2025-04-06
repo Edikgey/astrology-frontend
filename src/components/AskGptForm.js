@@ -12,35 +12,37 @@ const AskGptChat = ({ chartId }) => {
       console.warn("❌ Вопрос пустой, запрос не отправляется");
       return;
     }
-  
+
     if (!chartId) {
       console.error("❌ chartId не передан");
       setAnswer("Ошибка: Натальная карта не найдена");
       return;
     }
-  
+
     console.log("📤 Отправка вопроса:", question);
     console.log("📌 chart_id:", chartId);
-  
-
-
 
     setLoading(true);
     try {
       const token = localStorage.getItem("access_token");
-      if (!token) {
-        console.error("❌ Токен не найден в localStorage");
-        setAnswer("Вы не авторизованы.");
-        setLoading(false);
-        return;
+      const headers = {
+        "Content-Type": "application/json",
+      };
+
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      } else {
+        let sessionToken = localStorage.getItem("session_token");
+        if (!sessionToken) {
+          sessionToken = crypto.randomUUID();
+          localStorage.setItem("session_token", sessionToken);
+        }
+        headers["X-Session-Token"] = sessionToken;
       }
 
       const response = await fetch("https://astrologywebapp-production.up.railway.app/ask-gpt", {
         method: "POST",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
+        headers,
         body: JSON.stringify({ chart_id: chartId, question }),
       });
 

@@ -12,6 +12,7 @@ const days = Array.from({ length: 31 }, (_, i) => i + 1);
 const hours = Array.from({ length: 24 }, (_, i) => (i < 10 ? "0" + i : "" + i));
 const minutes = Array.from({ length: 60 }, (_, i) => (i < 10 ? "0" + i : "" + i));
 
+// 🔄 ОБНОВЛЁННАЯ ФУНКЦИЯ
 const calculateNatalChart = async (formData, token = null) => {
   try {
     const monthIndex = months.indexOf(formData.month) + 1;
@@ -29,14 +30,26 @@ const calculateNatalChart = async (formData, token = null) => {
       julian_date: formData.julianDate,
     };
 
+    const headers = {
+      "Content-Type": "application/json",
+    };
+
+    if (token) {
+      headers["Authorization"] = `Bearer ${token}`;
+    } else {
+      let sessionToken = localStorage.getItem("session_token");
+      if (!sessionToken) {
+        sessionToken = crypto.randomUUID();
+        localStorage.setItem("session_token", sessionToken);
+      }
+      payload.session_token = sessionToken;
+    }
+
     console.log("📦 Payload:", payload);
 
     const response = await fetch("https://astrologywebapp-production.up.railway.app/natal-chart", {
       method: "POST",
-      headers: {
-        "Authorization": token ? `Bearer ${token}` : "",
-        "Content-Type": "application/json",
-      },
+      headers,
       body: JSON.stringify(payload),
     });
 

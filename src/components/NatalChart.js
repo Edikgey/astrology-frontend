@@ -1,194 +1,279 @@
 import React, { useEffect, useRef } from "react";
 import * as d3 from "d3";
-import PatternVisualizer from "./PatternVisualizer";
 
-const signs = [
-  "ARIES", "TAURUS", "GEMINI", "CANCER", "LEO", "VIRGO",
-  "LIBRA", "SCORPIO", "SAGITTARIUS", "CAPRICORN", "AQUARIUS", "PISCES"
-];
-
-const NatalChart = ({ chartId, bodies, aspects, pointsData, patterns, structuredAspects }) => {
+const NatalChart = ({ bodies, aspects, houses }) => {
   const ref = useRef();
 
   useEffect(() => {
-    const width = 600;
-    const height = 600;
-    const radiusOuter = 240;
-    const radiusMiddle = 210;
-    const radiusInner = 180;
-    const centerX = width / 2;
-    const centerY = height / 2;
-
+    if (!houses || houses.length !== 12) {
+      console.warn("❗ Дома не загружены или неполные:", houses);
+      return;
+    }
+  
+    const width = 560;
+    const height = 560;
+    const center = 280;
+    const radiusZodiacOuter = 268.33;
+    const radiusZodiacInner = 240;
+  
+    const houseOuter = 180;
+    const houseInner = 140;
+    const labelRadius = 160;
+  
     const svg = d3.select(ref.current)
       .attr("width", width)
       .attr("height", height)
-      .style("background", "#f9f4fc")
+      .style("background", "#f7f0fa")
       .style("border-radius", "12px")
       .style("box-shadow", "0 0 12px rgba(0,0,0,0.1)");
-
+  
     svg.selectAll("*").remove();
+  
+    const g = svg.append("g").attr("transform", `translate(${center},${center})`);
+  
+    // === ФОН (ЗОДИАКАЛЬНЫЕ КРУГИ) ===
+    const bg = g.append("g").attr("id", "background");
+  
+    bg.append("circle").attr("r", radiusZodiacOuter).attr("fill", "#4B0082");
+    bg.append("circle").attr("r", radiusZodiacInner).attr("fill", "white");
+  
+    // === ДОМА ===
+    const houseGroup = g.append("g").attr("id", "houses");
 
-    const g = svg.append("g")
-      .attr("transform", `translate(${centerX}, ${centerY})`);
-
-    g.append("circle")
-      .attr("r", radiusOuter)
-      .attr("fill", "#fdfbff")
-      .attr("stroke", "#673ab7")
-      .attr("stroke-width", 14);
-
-    g.append("circle")
-      .attr("r", radiusInner)
-      .attr("fill", "none")
-      .attr("stroke", "#e0e0e0")
-      .attr("stroke-width", 1);
-
-    for (let i = 0; i < 12; i++) {
-      const angle = (i * 30 - 90) * (Math.PI / 180);
-      const xOuter = radiusOuter * Math.cos(angle);
-      const yOuter = radiusOuter * Math.sin(angle);
-
-      g.append("line")
-        .attr("x1", 0)
-        .attr("y1", 0)
-        .attr("x2", xOuter)
-        .attr("y2", yOuter)
-        .attr("stroke", "#e0e0e0")
-        .attr("stroke-width", 1);
-
-      const labelX = (radiusOuter - 10) * Math.cos(angle);
-      const labelY = (radiusOuter - 10) * Math.sin(angle);
-
-      g.append("text")
-        .attr("x", labelX)
-        .attr("y", labelY)
-        .attr("text-anchor", "middle")
-        .attr("alignment-baseline", "middle")
-        .attr("font-size", "12px")
-        .attr("font-family", "Arial, sans-serif")
-        .attr("fill", "#333")
-        .text(signs[i]);
-
-      const houseX = (radiusOuter - 30) * Math.cos(angle);
-      const houseY = (radiusOuter - 30) * Math.sin(angle);
-
-      g.append("text")
-        .attr("x", houseX)
-        .attr("y", houseY)
-        .attr("text-anchor", "middle")
-        .attr("alignment-baseline", "middle")
-        .attr("font-size", "10px")
-        .attr("fill", "#888")
-        .text(i + 1);
-    }
-
-    const findBodyKeyBySymbol = (symbol) => {
-      return Object.entries(bodies).find(([_, body]) => body.symbol === symbol)?.[0];
-    };
-
-    const getCoordFromDegree = (degree, r) => {
-      const angle = (degree - 90) * (Math.PI / 180);
-      return [r * Math.cos(angle), r * Math.sin(angle)];
-    };
-
-    const getColorByAspect = (aspect) => {
-      switch (aspect.toLowerCase()) {
-        case "square":
-        case "opposition": return "#f44336";
-        case "trine":
-        case "sextile": return "#4caf50";
-        case "conjunction": return "#ffeb3b";
-        default: return "#bbb";
-      }
-    };
-
-    Object.entries(bodies).forEach(([key, body]) => {
-      const [x, y] = getCoordFromDegree(body.degree, radiusMiddle);
-
-      g.append("circle")
-        .attr("cx", x)
-        .attr("cy", y)
-        .attr("r", 6)
-        .attr("fill", "#ff4081")
-        .attr("stroke", "#fff")
-        .attr("stroke-width", 1.5);
-
-      g.append("text")
-        .attr("x", x)
-        .attr("y", y - 12)
-        .attr("text-anchor", "middle")
-        .attr("font-size", "10px")
-        .attr("font-family", "Arial, sans-serif")
-        .attr("fill", "#222")
-        .text(body.symbol || key);
+    const normalized = houses.map((h, i) => {
+      let deg = Number(h.degree);
+      if (isNaN(deg)) deg = 0;
+      return { ...h, normDeg: deg };
     });
-
-    aspects.forEach((asp) => {
-      const fromSymbol = asp.from_body || asp.from;
-      const toSymbol = asp.to_body || asp.to;
-
-      const fromKey = findBodyKeyBySymbol(fromSymbol);
-      const toKey = findBodyKeyBySymbol(toSymbol);
-
-      if (!fromKey || !toKey) return;
-
-      const fromBody = bodies[fromKey];
-      const toBody = bodies[toKey];
-
-      if (!fromBody || !toBody) return;
-
-      const [x1, y1] = getCoordFromDegree(fromBody.degree, radiusInner);
-      const [x2, y2] = getCoordFromDegree(toBody.degree, radiusInner);
-
-      g.append("line")
+    
+    for (let i = 1; i < normalized.length; i++) {
+      if (normalized[i].normDeg < normalized[i - 1].normDeg) {
+        normalized[i].normDeg += 360;
+      }
+    }
+    
+    for (let i = 0; i < normalized.length; i++) {
+      const current = normalized[i];
+      const next = normalized[(i + 1) % 12];
+    
+      let startDeg = current.normDeg;
+      let endDeg = next.normDeg;
+      if (i === 11 && endDeg < startDeg) endDeg += 360;
+    
+      const startAngle = (-(startDeg - 90)) * (Math.PI / 180);
+      const endAngle = (-(endDeg - 90)) * (Math.PI / 180);
+    
+      const arc = d3.arc()
+        .innerRadius(houseInner)
+        .outerRadius(houseOuter)
+        .startAngle(startAngle)
+        .endAngle(endAngle);
+    
+      houseGroup.append("path")
+        .attr("d", arc())
+        .attr("fill", "#eeeeee");
+    
+      const extendedRadius = houseOuter + 60;
+    
+      const x1 = houseInner * Math.cos(startAngle);
+      const y1 = houseInner * Math.sin(startAngle);
+      const x2 = extendedRadius * Math.cos(startAngle); // удлинено
+      const y2 = extendedRadius * Math.sin(startAngle);
+    
+      houseGroup.append("line")
         .attr("x1", x1)
         .attr("y1", y1)
         .attr("x2", x2)
         .attr("y2", y2)
-        .attr("stroke", getColorByAspect(asp.aspect))
-        .attr("stroke-width", 1.5)
-        .attr("opacity", 0.9);
+        .attr("stroke", "#aaa")
+        .attr("stroke-width", 1)
+        .raise(); // повышаем приоритет
+    
+      const midDeg = startDeg + (endDeg - startDeg) / 2;
+      const midAngle = (-(midDeg - 90)) * (Math.PI / 180);
+      const xLabel = labelRadius * Math.cos(midAngle);
+      const yLabel = labelRadius * Math.sin(midAngle);
+    
+      houseGroup.append("text")
+        .attr("x", xLabel)
+        .attr("y", yLabel)
+        .attr("text-anchor", "middle")
+        .attr("dominant-baseline", "middle")
+        .attr("font-size", "15px")
+        .attr("fill", "#444")
+        .attr("font-family", "Roboto, sans-serif")
+        .text(current.symbol || i + 1);
+    }
+    
+  
+    // === ВЕРХНИЙ СЛОЙ ===
+    const fg = g.append("g").attr("id", "foreground");
+  
+    // Знаки зодиака
+    const zodiacSigns = ["РЫБЫ", "ВОДОЛЕЙ", "КОЗЕРОГ", "СТРЕЛЕЦ", "СКОРПИОН", "ВЕСЫ", "ДЕВА", "ЛЕВ", "РАК", "БЛИЗНЕЦЫ", "ТЕЛЕЦ", "ОВЕН"];
+
+// Радиусы для текста и линий внутри фиолетового круга
+const zodiacRadius = 252;        // для текста
+const zodiacLineInnerRadius = 240; // Внутренний радиус
+const zodiacLineOuterRadius = 268.33; // Внешний радиус
+
+// Отображение знаков зодиака
+zodiacSigns.forEach((sign, i) => {
+  const angle = (i * 30 - 75) * (Math.PI / 180);
+  const x = zodiacRadius * Math.cos(angle);
+  const y = zodiacRadius * Math.sin(angle);
+  const rotation = (angle * 180) / Math.PI + 90;
+
+  fg.append("text")
+    .attr("x", x)
+    .attr("y", y)
+    .attr("text-anchor", "middle")
+    .attr("dominant-baseline", "middle")
+    .attr("transform", `rotate(${rotation}, ${x}, ${y})`)
+    .attr("fill", "white")
+    .attr("font-family", "Roboto, sans-serif")
+    .attr("font-size", "14px")
+    .text(sign);
+});
+
+// Линии между знаками — строго по радиусу фиолетового круга
+for (let i = 0; i < 12; i++) {
+  const angle = ((i * 30 + 15) - 75) * (Math.PI / 180); // между знаками
+
+  const x1 = zodiacLineInnerRadius * Math.cos(angle);
+  const y1 = zodiacLineInnerRadius * Math.sin(angle);
+  const x2 = zodiacLineOuterRadius * Math.cos(angle);
+  const y2 = zodiacLineOuterRadius * Math.sin(angle);
+
+  fg.append("line")
+    .attr("x1", x1)
+    .attr("y1", y1)
+    .attr("x2", x2)
+    .attr("y2", y2)
+    .attr("stroke", "white")
+    .attr("stroke-width", 4);
+}
+
+
+  
+    // Планеты
+    const redSymbols = ["☉", "☽", "☿", "♀", "♂", "♃", "♄", "♅", "♆", "♇"];
+    Object.entries(bodies || {}).forEach(([key, body], i) => {
+      const isAscDesc = key === "AS" || key === "DS";
+      const isMcIc = key === "MC" || key === "IC";
+      const isRed = redSymbols.includes(body.symbol);
+      const color = isRed ? "#d22" : "black";
+  
+      let x, y;
+  
+      if (isAscDesc) {
+        const angle = key === "AS" ? Math.PI : 0;
+        const r = 275;
+        x = r * Math.cos(angle);
+        y = r * Math.sin(angle);
+      } else {
+        const degree = body.degree || 0;
+        const angle = (degree - 90) * (Math.PI / 180);
+        const r = isMcIc ? 225 : 200 + ((i % 3) * 8);
+        x = r * Math.cos(angle);
+        y = r * Math.sin(angle);
+      }
+  
+      fg.append("text")
+        .attr("x", x)
+        .attr("y", y)
+        .attr("font-size", "22px")
+        .attr("text-anchor", "middle")
+        .attr("dominant-baseline", "central")
+        .attr("font-family", "Roboto, sans-serif")
+        .attr("fill", color)
+        .text(body.symbol || key);
     });
-  }, [bodies, aspects]);
+  
+    // Аспекты
+    aspects?.forEach((asp) => {
+      const from = Object.values(bodies).find(b => b.symbol === asp.from || b.name === asp.from);
+      const to = Object.values(bodies).find(b => b.symbol === asp.to || b.name === asp.to);
+      if (!from || !to) return;
+  
+      const r = 186;
+      const [x1, y1] = [(r * Math.cos((from.degree - 90) * Math.PI / 180)), (r * Math.sin((from.degree - 90) * Math.PI / 180))];
+      const [x2, y2] = [(r * Math.cos((to.degree - 90) * Math.PI / 180)), (r * Math.sin((to.degree - 90) * Math.PI / 180))];
+  
+      fg.append("line")
+        .attr("x1", x1)
+        .attr("y1", y1)
+        .attr("x2", x2)
+        .attr("y2", y2)
+        .attr("stroke", asp.color || "#ccc")
+        .attr("stroke-width", 2)
+        .attr("opacity", 0.6);
+    });
+    if (houses?.length === 12) {
+      const labelRadius = 160;
+    
+      const normalized = houses.map((h, i) => {
+        let deg = Number(h.degree);
+        if (isNaN(deg)) deg = 0;
+        return { ...h, normDeg: deg };
+      });
+    
+      for (let i = 1; i < normalized.length; i++) {
+        if (normalized[i].normDeg < normalized[i - 1].normDeg) {
+          normalized[i].normDeg += 360;
+        }
+      }
+    
+      for (let i = 0; i < normalized.length; i++) {
+        const current = normalized[i];
+        const next = normalized[(i + 1) % 12];
+    
+        let startDeg = current.normDeg;
+        let endDeg = next.normDeg;
+        if (i === 11 && endDeg < startDeg) endDeg += 360;
+    
+        const midDeg = startDeg + (endDeg - startDeg) / 2;
+        const midAngle = (-(midDeg - 90)) * (Math.PI / 180);
+        const xLabel = labelRadius * Math.cos(midAngle);
+        const yLabel = labelRadius * Math.sin(midAngle);
+    
+        g.append("text")
+          .attr("x", xLabel)
+          .attr("y", yLabel)
+          .attr("text-anchor", "middle")
+          .attr("dominant-baseline", "middle")
+          .attr("font-size", "15px")
+          .attr("fill", "#444")
+          .attr("font-family", "Roboto, sans-serif")
+          .text(current.symbol || i + 1);
+    
+        // === ЛИНИИ разделителей (поверх всего) ===
+        const startAngle = (-(startDeg - 90)) * (Math.PI / 180);
+        const x1 = houseInner * Math.cos(startAngle);
+        const y1 = houseInner * Math.sin(startAngle);
+        const x2 = houseOuter * Math.cos(startAngle);
+        const y2 = houseOuter * Math.sin(startAngle);
+    
+        g.append("line")
+          .attr("x1", x1)
+          .attr("y1", y1)
+          .attr("x2", x2)
+          .attr("y2", y2)
+          .attr("stroke", "#aaa")
+          .attr("stroke-width", 1)
+          .raise(); // приоритет в DOM
+      }
+    }
+    
+  }, [bodies, aspects, houses]);
+  
+  
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "30px" }}>
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: 30 }}>
       <svg ref={ref}></svg>
-
-      {/* 📍 Пункты планет (pointsData) */}
-      <div style={{ marginTop: "30px", maxWidth: 600 }}>
-        <h3>Планеты:</h3>
-        <ul>
-          {pointsData?.map((point, idx) => (
-            <li key={idx}>{point}</li>
-          ))}
-        </ul>
-      </div>
-
-      {/* ♻️ Паттерны (patterns) */}
-      <PatternVisualizer patterns={patterns} />
-
-      {/* ✴️ Аспекты по категориям */}
-      <div style={{ marginTop: "30px", maxWidth: 600 }}>
-        <h3>Аспекты:</h3>
-        <strong>Мажорные:</strong>
-        <ul>
-        {structuredAspects?.major.map((asp, i) => (
-          <li key={i}>{asp}</li>
-        ))}
-
-        </ul>
-        <strong>Минорные:</strong>
-        <ul>
-        {structuredAspects?.minor.map((asp, i) => (
-          <li key={i}>{asp}</li>
-        ))}
-
-        </ul>
-      </div>
     </div>
   );
 };
 
 export default NatalChart;
-

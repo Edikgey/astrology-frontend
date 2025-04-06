@@ -26,6 +26,7 @@ const NatalChartResultPage = () => {
         pointsData={chartData.points_data}
         patterns={chartData.patterns_data}
         structuredAspects={chartData.aspects_structured}
+        houses={chartData.houses}
       />
 
       {/* 🧠 Блок с GPT чатом */}
