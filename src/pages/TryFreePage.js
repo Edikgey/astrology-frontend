@@ -35,8 +35,10 @@ const calculateNatalChart = async (formData, token = null) => {
     };
 
     if (token) {
+      // ✅ если пользователь авторизован
       headers["Authorization"] = `Bearer ${token}`;
     } else {
+      // 👤 если пользователь гость — добавляем session_token в payload
       let sessionToken = localStorage.getItem("session_token");
       if (!sessionToken) {
         sessionToken = crypto.randomUUID();
@@ -45,7 +47,8 @@ const calculateNatalChart = async (formData, token = null) => {
       payload.session_token = sessionToken;
     }
 
-    console.log("📦 Payload:", payload);
+    console.log("📦 Финальный payload:", payload);
+    console.log("📩 Заголовки запроса:", headers);
 
     const response = await fetch("https://astrologywebapp-production.up.railway.app/natal-chart", {
       method: "POST",
@@ -54,11 +57,9 @@ const calculateNatalChart = async (formData, token = null) => {
     });
 
     const data = await response.json();
-    console.log("📦 Полный ответ от сервера:", data);
+    console.log("📬 Ответ от сервера:", data);
     if (!response.ok) throw new Error(JSON.stringify(data));
 
-    console.log("✅ Натальная карта получена:", data);
-    console.log("🎯 chart_id в ответе:", data.chart_id);
     localStorage.setItem("natalChart", JSON.stringify(data));
     localStorage.setItem("chart_id", data.chart_id);
     return data;
@@ -67,6 +68,7 @@ const calculateNatalChart = async (formData, token = null) => {
     return null;
   }
 };
+
 
 const TryFreePage = () => {
   const { user } = useAuth();
