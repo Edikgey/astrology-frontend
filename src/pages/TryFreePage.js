@@ -17,6 +17,7 @@ const calculateNatalChart = async (formData, token = null) => {
   try {
     const monthIndex = months.indexOf(formData.month) + 1;
 
+    // Базовый payload
     const payload = {
       year: parseInt(formData.year),
       month: monthIndex,
@@ -35,15 +36,15 @@ const calculateNatalChart = async (formData, token = null) => {
     };
 
     if (token) {
-      // ✅ если пользователь авторизован
       headers["Authorization"] = `Bearer ${token}`;
     } else {
-      // 👤 если пользователь гость — добавляем session_token в payload
       let sessionToken = localStorage.getItem("session_token");
       if (!sessionToken) {
         sessionToken = crypto.randomUUID();
         localStorage.setItem("session_token", sessionToken);
       }
+
+      // 👇 Важно: явно добавляем session_token в тело
       payload.session_token = sessionToken;
     }
 
