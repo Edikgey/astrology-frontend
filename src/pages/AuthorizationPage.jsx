@@ -16,7 +16,11 @@ const AuthorizationPage = () => {
   const [isCodeSent, setIsCodeSent] = useState(false);
 
   useEffect(() => {
-    if (user) navigate("/");
+    if (user) {
+      const redirectPath = localStorage.getItem("redirect_after_login") || "/";
+      localStorage.removeItem("redirect_after_login");
+      navigate(redirectPath);
+    }
   }, [user, navigate]);
 
   const extractErrorMessage = (err) => {

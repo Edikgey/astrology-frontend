@@ -1,3 +1,4 @@
+// ...импорт как есть
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
@@ -9,8 +10,13 @@ const days = Array.from({ length: 31 }, (_, i) => i + 1);
 const hours = Array.from({ length: 24 }, (_, i) => (i < 10 ? "0" + i : "" + i));
 const minutes = Array.from({ length: 60 }, (_, i) => (i < 10 ? "0" + i : "" + i));
 
-const calculateNatalChart = async (formData, token = null) => {
+// ✅ универсальный
+const calculateNatalChart = async (formData) => {
   try {
+    const months = [
+      "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь",
+      "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"
+    ];
     const monthIndex = months.indexOf(formData.month) + 1;
 
     const payload = {
@@ -30,18 +36,20 @@ const calculateNatalChart = async (formData, token = null) => {
       "Content-Type": "application/json",
     };
 
-    if (token && token !== "null") {
-      headers["Authorization"] = `Bearer ${token}`;
+    const jwt = localStorage.getItem("access_token");
+
+    if (jwt && jwt !== "null") {
+      headers["Authorization"] = `Bearer ${jwt}`;
     } else {
       let sessionToken = localStorage.getItem("session_token");
       if (!sessionToken) {
         sessionToken = crypto.randomUUID();
         localStorage.setItem("session_token", sessionToken);
       }
-      payload.session_token = sessionToken;
+      headers["X-Session-Token"] = sessionToken; // ⬅️ теперь токен только в заголовке
     }
 
-    console.log("📦 Payload перед отправкой:", payload);
+    console.log("📦 Payload:", payload);
     console.log("📩 Headers:", headers);
 
     const response = await fetch("https://astrologywebapp-production.up.railway.app/natal-chart", {
@@ -63,6 +71,8 @@ const calculateNatalChart = async (formData, token = null) => {
     return null;
   }
 };
+
+
 
 const TryFreePage = () => {
   const { user } = useAuth();
@@ -156,7 +166,6 @@ const TryFreePage = () => {
       + Math.floor(y_adj / 4) - Math.floor(y_adj / 100) + Math.floor(y_adj / 400) - 32045;
 
     const JD = JDN + (h - 12) / 24 + min / 1440;
-
     return JD.toFixed(5);
   };
 
@@ -194,10 +203,7 @@ const TryFreePage = () => {
 
     localStorage.setItem("tempUserData", JSON.stringify(finalData));
 
-    let rawToken = localStorage.getItem("access_token");
-    const token = rawToken === "null" || !rawToken ? null : rawToken;
-
-    const result = await calculateNatalChart(finalData, token);
+    const result = await calculateNatalChart(finalData);
 
     if (!result) {
       alert("Произошла ошибка при расчёте натальной карты");

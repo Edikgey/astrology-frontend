@@ -1,30 +1,12 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import AskGptForm from "./AskGptForm";
 import "./Header.css";
 
 const Header = () => {
-  const { user, signOut } = useAuth();
+  const { user, logout } = useAuth(); // ✅ заменили signOut на logout
   const [menuOpen, setMenuOpen] = useState(false);
-  const [showChat, setShowChat] = useState(false);
-  const [gptError, setGptError] = useState(null);
   const navigate = useNavigate();
-  const chartId = localStorage.getItem("chart_id");
-
-  const handleGptClick = () => {
-    if (!user) {
-      setGptError("Чтобы использовать GPT, необходимо войти в аккаунт.");
-      return;
-    }
-    if (!chartId) {
-      setGptError("Натальная карта не найдена. Сначала рассчитайте карту.");
-      return;
-    }
-
-    setGptError(null);
-    setShowChat((prev) => !prev);
-  };
 
   return (
     <nav className="navbar">
@@ -37,18 +19,6 @@ const Header = () => {
       </div>
 
       <div className="nav-right">
-        <button className="gpt-button" onClick={handleGptClick}>
-          🧠 Спросить GPT
-        </button>
-
-        {gptError && <p className="gpt-error-message">{gptError}</p>}
-
-        {showChat && chartId && (
-          <div className="gpt-popup">
-            <AskGptForm chartId={parseInt(chartId)} />
-          </div>
-        )}
-
         {user ? (
           <div className="user-menu">
             <div
@@ -83,7 +53,7 @@ const Header = () => {
                   <hr />
                   <button
                     onClick={() => {
-                      signOut();
+                      logout();              // ✅ работает корректно
                       setMenuOpen(false);
                       navigate("/");
                     }}
@@ -106,3 +76,4 @@ const Header = () => {
 };
 
 export default Header;
+
