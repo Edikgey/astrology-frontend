@@ -85,10 +85,9 @@ const HomePage = () => {
       {/* Герой-секция */}
       <section className="hero-section">
         <div className="hero">
-          <h1>Your Personal AI Astrologer</h1>
+          <h1>Ваш личный ИИ-Астролог</h1>
           <p>
-            Navigate life's challenges with confidence using your personal AI Astrologer,
-            monthly forecast, in-depth reports, and personalized chart readings.
+            Преодолевайте жизненные трудности с уверенностью вместе с вашим персональным ИИ-Астрологом:  подробные отчёты и персонализированные чтения натальной карты.
           </p>
           <div className="buttons">
             <Link to="/try-free">

@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
 import PatternVisualizer from "./PatternVisualizer";
 import "./AspectsList.css";
+import "./NatalChart.css";
 
 // Основной компонент, получающий данные карты
 const NatalChart = ({ bodies, aspects, houses, patterns, structuredAspects, children }) => {
@@ -34,8 +35,8 @@ const NatalChart = ({ bodies, aspects, houses, patterns, structuredAspects, chil
     if (!houses || houses.length !== 12) return;
 
     // 🎯 Общие настройки размеров
-    const width = 560;
-    const height = 560;
+    const width =550;
+    const height =550;
     const center = width / 2;
 
     // 📏 Радиусы разных уровней кругов
@@ -55,12 +56,14 @@ const NatalChart = ({ bodies, aspects, houses, patterns, structuredAspects, chil
     const redSymbols = ["☉", "☽", "☿", "♀", "♂", "♃", "♄", "♅", "♆", "♇", "☊", "⚷"]; // Планеты
 
     // 🎨 Инициализация SVG
-    const svg = d3.select(ref.current)
-      .attr("width", width)
-      .attr("height", height)
-      .style("background", "#f7f0fa")
-      .style("border-radius", "12px")
-      .style("box-shadow", "0 0 12px rgba(0,0,0,0.1)");
+  const svg = d3.select(ref.current)
+  .attr("viewBox", `0 0 ${width} ${height}`)
+  .attr("preserveAspectRatio", "xMidYMid meet")
+  .attr("class", "responsive-svg") // 👈 вместо width/height
+  .style("background", "#f7f0fa")
+  .style("border-radius", "12px")
+  .style("box-shadow", "0 0 12px rgba(0,0,0,0.1)");
+
 
     svg.selectAll("*").remove(); // Очистка SVG перед отрисовкой
 
@@ -453,102 +456,93 @@ topOverlay.append("text")
   }, [bodies, aspects, houses, visiblePlanets, visibleAspects]);
 
 
-  return (
-    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: 30 }}>
-      {/* Верхний блок: карта + переключатели */}
-      <div style={{ display: "flex", justifyContent: "center", alignItems: "flex-start", gap: 40 }}>
-        {/* SVG карта */}
+ return (
+  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: 30 }}>
+    {/* Карта и переключатели */}
+    <div className="chart-layout">
+      <div className="chart-wrapper">
         <svg ref={ref}></svg>
-  
-        {/* Переключатели */}
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
-          <button
-            onClick={() => setShowToggles(prev => !prev)}
-            style={{
-              marginBottom: 20,
-              padding: "8px 16px",
-              fontSize: 14,
-              background: "linear-gradient(to right, #2196f3, #21cbf3)",
-              color: "white",
-              border: "none",
-              borderRadius: 8,
-              cursor: "pointer",
-              fontWeight: "bold"
-            }}
-          >
-            {showToggles ? "Скрыть переключатели" : "Показать переключатели"}
-          </button>
-  
-          {showToggles && (
-            <>
-              <h3 style={{ margin: "8px 0", fontFamily: "'Montserrat', sans-serif" }}>Планеты:</h3>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", maxWidth: 180 }}>
-                {Object.keys(visiblePlanets).map((symbol) => (
-                  <label key={symbol} style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                    <input
-                      type="checkbox"
-                      checked={visiblePlanets[symbol]}
-                      onChange={() =>
-                        setVisiblePlanets((prev) => ({
-                          ...prev,
-                          [symbol]: !prev[symbol],
-                        }))
-                      }
-                    />
-                    {symbol}
-                  </label>
-                ))}
-              </div>
-  
-              <h3 style={{ margin: "8px 0", fontFamily: "'Montserrat', sans-serif" }}>Аспекты:</h3>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: "8px", maxWidth: 180 }}>
-                {Object.keys(visibleAspects).map((asp) => (
-                  <label key={asp} style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                    <input
-                      type="checkbox"
-                      checked={visibleAspects[asp]}
-                      onChange={() =>
-                        setVisibleAspects((prev) => ({
-                          ...prev,
-                          [asp]: !prev[asp],
-                        }))
-                      }
-                    />
-                    {asp}
-                  </label>
-                ))}
-              </div>
-            </>
-          )}
+      </div>
+
+      <div className="chart-toggles">
+        <button
+          onClick={() => setShowToggles(prev => !prev)}
+          className="toggle-button"
+        >
+          {showToggles ? "Скрыть переключатели" : "Показать переключатели"}
+        </button>
+
+        {showToggles && (
+          <>
+            <h3>Планеты:</h3>
+            <div className="checkbox-group">
+              {Object.keys(visiblePlanets).map((symbol) => (
+                <label key={symbol}>
+                  <input
+                    type="checkbox"
+                    checked={visiblePlanets[symbol]}
+                    onChange={() =>
+                      setVisiblePlanets((prev) => ({
+                        ...prev,
+                        [symbol]: !prev[symbol],
+                      }))
+                    }
+                  />
+                  {symbol}
+                </label>
+              ))}
+            </div>
+
+            <h3>Аспекты:</h3>
+            <div className="checkbox-group">
+              {Object.keys(visibleAspects).map((asp) => (
+                <label key={asp}>
+                  <input
+                    type="checkbox"
+                    checked={visibleAspects[asp]}
+                    onChange={() =>
+                      setVisibleAspects((prev) => ({
+                        ...prev,
+                        [asp]: !prev[asp],
+                      }))
+                    }
+                  />
+                  {asp}
+                </label>
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+
+    {/* Дети и аспекты */}
+    {children}
+    <PatternVisualizer patterns={patterns} />
+    <div className="aspects-wrapper">
+      <h3>Аспекты:</h3>
+      <div className="aspects-columns">
+        <div className="aspects-column">
+          <strong>Мажорные:</strong>
+          <ul>
+            {structuredAspects?.major.map((asp, i) => (
+              <li key={i}>{asp}</li>
+            ))}
+          </ul>
+        </div>
+        <div className="aspects-column">
+          <strong>Минорные:</strong>
+          <ul>
+            {structuredAspects?.minor.map((asp, i) => (
+              <li key={i}>{asp}</li>
+            ))}
+          </ul>
         </div>
       </div>
-      {children}
-      {/* Ниже — визуализатор паттернов и списки аспектов */}
-      <PatternVisualizer patterns={patterns} />
-      <div className="aspects-wrapper">
-  <h3>Аспекты:</h3>
-  <div className="aspects-columns">
-    <div className="aspects-column">
-      <strong>Мажорные:</strong>
-      <ul>
-        {structuredAspects?.major.map((asp, i) => (
-          <li key={i}>{asp}</li>
-        ))}
-      </ul>
-    </div>
-    <div className="aspects-column">
-      <strong>Минорные:</strong>
-      <ul>
-        {structuredAspects?.minor.map((asp, i) => (
-          <li key={i}>{asp}</li>
-        ))}
-      </ul>
     </div>
   </div>
-</div>
+);
 
-    </div>
-  );
   
   
 };

@@ -1,41 +1,58 @@
 .aspects-wrapper {
-    max-width: 900px;
-    margin: 40px auto;
-    font-family: 'Roboto', sans-serif;
-    color: #111;
-    padding-left: 100px;
-  }
-  
-  .aspects-wrapper h3 {
-    text-align: center;
-    font-size: 22px;
-    margin-bottom: 20px;
-  }
-  
+  max-width: 900px;
+  margin: 40px auto;
+  font-family: 'Roboto', sans-serif;
+  color: #111;
+  padding: 0 16px;
+  box-sizing: border-box;
+}
+
+.aspects-wrapper h3 {
+  text-align: center;
+  font-size: 22px;
+  margin-bottom: 20px;
+}
+
+/* Контейнер для колонок */
+.aspects-columns {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Стили одной колонки */
+.aspects-column {
+  width: 100%;
+}
+
+/* Заголовки колонок */
+.aspects-column strong {
+  font-size: 18px;
+  margin-bottom: 10px;
+  display: block;
+}
+
+/* Список аспектов */
+.aspects-column ul {
+  list-style-type: disc;
+  padding-left: 20px;
+}
+
+/* Один пункт списка */
+.aspects-column li {
+  margin-bottom: 8px;
+  line-height: 1.5;
+  font-size: 15px;
+}
+
+/* 🖥 Раскладка в 2 колонки для ширины 600px+ */
+@media (min-width: 600px) {
   .aspects-columns {
-    display: flex;
-    gap: 40px;
+    flex-direction: row;
     justify-content: space-between;
   }
-  
+
   .aspects-column {
-    flex: 1;
+    width: 48%;
   }
-  
-  .aspects-column strong {
-    font-size: 18px;
-    margin-bottom: 10px;
-    display: block;
-  }
-  
-  .aspects-column ul {
-    list-style-type: disc;
-    padding-left: 20px;
-  }
-  
-  .aspects-column li {
-    margin-bottom: 8px;
-    line-height: 1.5;
-    font-size: 15px;
-  }
-  
+}
