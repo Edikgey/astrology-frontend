@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./AskGptChat.css";
 
@@ -7,19 +7,64 @@ const AskGptForm = ({ chartId }) => {
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
+  const [chartData, setChartData] = useState(null);
   const navigate = useNavigate();
 
-  const isAuthenticated = !!localStorage.getItem("access_token");
-  const userMessages = messages.filter((m) => m.user === "Вы");
-  const hasReachedLimit = !isAuthenticated && userMessages.length >= 2;
+  const sessionToken =
+    localStorage.getItem("session_token") ||
+    (() => {
+      const token = crypto.randomUUID();
+      localStorage.setItem("session_token", token);
+      return token;
+    })();
 
-  const sendQuestion = async () => {
-    if (!question.trim()) return;
+  // 🔓 Лимит отключён
+  const hasReachedLimit = false;
 
-    const newMessage = { user: "Вы", text: question.trim() };
+  // Загрузка истории чата и данных карты
+  useEffect(() => {
+    const fetchInitialData = async () => {
+      const headers = {};
+      const jwt = localStorage.getItem("access_token");
+      if (jwt && jwt !== "null") {
+        headers["Authorization"] = `Bearer ${jwt}`;
+      } else {
+        headers["X-Session-Token"] = sessionToken;
+      }
+
+      try {
+        const chatRes = await fetch(
+          `https://astrologywebapp-production.up.railway.app/gpt-messages?chart_id=${chartId}`,
+          { method: "GET", headers }
+        );
+        const chatData = await chatRes.json();
+        const formattedMessages = chatData.map((msg) => ({
+          user: msg.role === "user" ? "Вы" : "GPT",
+          text: msg.content,
+        }));
+        setMessages(formattedMessages);
+
+        const chartRes = await fetch(
+          `https://astrologywebapp-production.up.railway.app/natal-chart/${chartId}`,
+          { method: "GET", headers }
+        );
+        const chartJson = await chartRes.json();
+        setChartData(chartJson);
+      } catch (error) {
+        console.error("❌ Ошибка загрузки данных:", error);
+      }
+    };
+
+    if (chartId) {
+      fetchInitialData();
+    }
+  }, [chartId, sessionToken]);
+
+  const sendQuestion = async (q = question) => {
+    if (!q.trim()) return;
+
+    const newMessage = { user: "Вы", text: q.trim() };
     const updatedMessages = [...messages, newMessage];
-
-    if (hasReachedLimit) return;
 
     setMessages(updatedMessages);
     setQuestion("");
@@ -29,7 +74,7 @@ const AskGptForm = ({ chartId }) => {
     try {
       const payload = {
         chart_id: Number(chartId),
-        question: question.trim(),
+        question: q.trim(),
       };
 
       const headers = {
@@ -37,24 +82,20 @@ const AskGptForm = ({ chartId }) => {
       };
 
       const jwt = localStorage.getItem("access_token");
-      const sessionToken = localStorage.getItem("session_token");
-
       if (jwt && jwt !== "null") {
         headers["Authorization"] = `Bearer ${jwt}`;
       } else {
-        let token = sessionToken;
-        if (!token) {
-          token = crypto.randomUUID();
-          localStorage.setItem("session_token", token);
-        }
-        headers["X-Session-Token"] = token;
+        headers["X-Session-Token"] = sessionToken;
       }
 
-      const response = await fetch("https://astrologywebapp-production.up.railway.app/ask-gpt", {
-        method: "POST",
-        headers,
-        body: JSON.stringify(payload),
-      });
+      const response = await fetch(
+        "https://astrologywebapp-production.up.railway.app/ask-gpt",
+        {
+          method: "POST",
+          headers,
+          body: JSON.stringify(payload),
+        }
+      );
 
       const data = await response.json();
       const gptMessage = {
@@ -64,10 +105,7 @@ const AskGptForm = ({ chartId }) => {
 
       setMessages((prev) => [...prev, gptMessage]);
     } catch (error) {
-      setMessages((prev) => [
-        ...prev,
-        { user: "GPT", text: "Ошибка запроса" },
-      ]);
+      setMessages((prev) => [...prev, { user: "GPT", text: "Ошибка запроса" }]);
     } finally {
       setLoading(false);
       setIsTyping(false);
@@ -78,10 +116,25 @@ const AskGptForm = ({ chartId }) => {
     <div className="askgpt-container">
       <h4>Чат с GPT</h4>
 
+      {chartData && (
+        <div className="chart-info">
+          <p>
+            <strong>Карта ID:</strong> {chartData.chart_id}
+          </p>
+          <p>
+            <strong>Градусы Солнца:</strong>{" "}
+            {chartData.bodies_for_circle?.["☉"]?.roundedDegree}
+          </p>
+        </div>
+      )}
+
       {messages.length > 0 && (
-        <div className={`chat-messages ${hasReachedLimit ? "blurred" : ""}`}>
+        <div className="chat-messages">
           {messages.map((msg, index) => (
-            <div key={index} className={`message ${msg.user === "Вы" ? "user" : "gpt"}`}>
+            <div
+              key={index}
+              className={`message ${msg.user === "Вы" ? "user" : "gpt"}`}
+            >
               <strong>{msg.user}:</strong> {msg.text}
             </div>
           ))}
@@ -94,39 +147,43 @@ const AskGptForm = ({ chartId }) => {
         </div>
       )}
 
-      {hasReachedLimit && (
-        <div className="auth-warning" style={{ marginBottom: 12 }}>
-          Чтобы продолжить, войдите в аккаунт
+      {/* ✅ Готовые вопросы */}
+      <div className="predefined-questions" style={{ marginBottom: 12 }}>
+        <p>
+          <strong>Попробуйте один из готовых вопросов:</strong>
+        </p>
+        <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+          {[
+            "Какой я тип личности?",
+            "Какие у меня сильные стороны по натальной карте?",
+            "На что обратить внимание в отношениях?",
+          ].map((preset, i) => (
+            <button
+              key={i}
+              onClick={() => sendQuestion(preset)}
+              className="preset-btn"
+              disabled={loading}
+            >
+              {preset}
+            </button>
+          ))}
         </div>
-      )}
+      </div>
 
-      {!hasReachedLimit && (
-        <>
-          <textarea
-            rows={2}
-            className="chat-input"
-            value={question}
-            onChange={(e) => setQuestion(e.target.value)}
-            placeholder="Введите вопрос..."
-          />
-          <button
-            className="chat-send"
-            onClick={sendQuestion}
-            disabled={loading || (!question.trim() && !isTyping)}
-          >
-            {loading ? "Отправка..." : "Спросить"}
-          </button>
-        </>
-      )}
-
-      {hasReachedLimit && (
-        <button
-          className="chat-send auth-btn"
-          onClick={() => navigate("/authorization")}
-        >
-          Войти
-        </button>
-      )}
+      <textarea
+        rows={2}
+        className="chat-input"
+        value={question}
+        onChange={(e) => setQuestion(e.target.value)}
+        placeholder="Введите вопрос..."
+      />
+      <button
+        className="chat-send"
+        onClick={() => sendQuestion()}
+        disabled={loading || (!question.trim() && !isTyping)}
+      >
+        {loading ? "Отправка..." : "Спросить"}
+      </button>
     </div>
   );
 };

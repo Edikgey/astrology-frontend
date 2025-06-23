@@ -136,28 +136,23 @@ const HomePage = () => {
 
 
 
-      {/* Секция тарифов */}
-{/* Секция тарифов */}
+      {/*
 <section className="pricing-section">
-  {/* Заголовок */}
   <h2 className="pricing-title">Выберите ваш космический план</h2>
   <p className="pricing-subtitle">
     Доступные, персонализированные инструменты астрологии для вашего самопознания.
   </p>
 
-  {/* Сетка тарифов */}
   <div className="pricing-grid">
-    {/* Тариф "Еженедельно" */}
     <div className="pricing-card">
       <h3 className="plan-name">Еженедельно</h3>
       <p className="price">$9.97 <span>/ неделя</span></p>
       <button 
-         className="outline-button" 
-         onClick={() => handlePaymentClick("https://app.lava.top/1363349239?subscriptionOfferId=108385b3-604f-4888-901b-6f8339614f78")}
-
-          >
-         Начать пробовать
-</button>
+        className="outline-button" 
+        onClick={() => handlePaymentClick("https://app.lava.top/1363349239?subscriptionOfferId=108385b3-604f-4888-901b-6f8339614f78")}
+      >
+        Начать пробовать
+      </button>
       <p className="cancel-text">Вы можете отменить в любое время</p>
       <ul className="features-list">
         <li>Персонализированные ежедневные идеи</li>
@@ -166,17 +161,15 @@ const HomePage = () => {
       </ul>
     </div>
 
-    {/* Тариф "Ежемесячно" */}
     <div className="pricing-card">
       <h3 className="plan-name">Ежемесячно</h3>
       <p className="price">$19.97 <span>/ месяц</span></p>
       <button 
-         className="outline-button" 
-         onClick={() => handlePaymentClick("https://app.lava.top/1363349239?subscriptionOfferId=108385b3-604f-4888-901b-6f8339614f78")}
-          >
-         Присоединяйтесь к ежемесячному плану
-</button>
-
+        className="outline-button" 
+        onClick={() => handlePaymentClick("https://app.lava.top/1363349239?subscriptionOfferId=108385b3-604f-4888-901b-6f8339614f78")}
+      >
+        Присоединяйтесь к ежемесячному плану
+      </button>
       <p className="cancel-text">Вы можете отменить в любое время</p>
       <ul className="features-list">
         <li>Всё в недельном плане</li>
@@ -185,13 +178,15 @@ const HomePage = () => {
       </ul>
     </div>
 
-    {/* Тариф "Полугодовой" (Популярный) */}
     <div className="pricing-card popular">
       <p className="purple-text">Самый популярный</p>
       <h3 className="plan-name">Полугодовой</h3>
       <p className="price">$16.66 <span>/ месяц</span></p>
       <p className="discount">Сэкономьте $20</p>
-      <button className="filled-button" onClick={() =>handlePaymentClick("https://app.lava.top/1363349239?subscriptionOfferId=108385b3-604f-4888-901b-6f8339614f78")}>
+      <button 
+        className="filled-button" 
+        onClick={() => handlePaymentClick("https://app.lava.top/1363349239?subscriptionOfferId=108385b3-604f-4888-901b-6f8339614f78")}
+      >
         Обновите сейчас
       </button>
       <p className="cancel-text">Вы можете отменить в любое время</p>
@@ -203,13 +198,15 @@ const HomePage = () => {
       </ul>
     </div>
 
-    {/* Тариф "Годовой" (Лучший по цене) */}
     <div className="pricing-card best-value">
       <p className="green-text">Лучшее соотношение цены и качества</p>
       <h3 className="plan-name">Ежегодно</h3>
       <p className="price">$12.50 <span>/ месяц</span></p>
       <p className="discount">Сэкономьте $90</p>
-      <button className="outline-button" onClick={() => handlePaymentClick("https://app.lava.top/1363349239?subscriptionOfferId=108385b3-604f-4888-901b-6f8339614f78")}>
+      <button 
+        className="outline-button" 
+        onClick={() => handlePaymentClick("https://app.lava.top/1363349239?subscriptionOfferId=108385b3-604f-4888-901b-6f8339614f78")}
+      >
         Получите лучшую сделку
       </button>
       <p className="cancel-text">Вы можете отменить в любое время</p>
@@ -271,50 +268,50 @@ const HomePage = () => {
 </section>
 
 <section className="video-gallery">
-    {/* Первый ряд с тремя видео */}
-    <div className="video-row">
-        <div className="video-item">
-            <video controls width="100%">
-                <source src="https://res.cloudinary.com/dizmybqfl/video/upload/v1742055663/Download_3_folmdn.mp4" type="video/mp4" />
-            </video>
-            <p>Описание первого видео</p>
-        </div>
-        <div className="video-item">
-            <video controls width="100%">
-                <source src="https://res.cloudinary.com/dizmybqfl/video/upload/v1742055653/Download_2_jfkr1p.mp4" type="video/mp4" />
-            </video>
-            <p>Описание второго видео</p>
-        </div>
-        <div className="video-item">
-            <video controls width="100%">
-                <source src="https://res.cloudinary.com/dizmybqfl/video/upload/v1742055647/Download_1_crzg24.mp4" type="video/mp4" />
-            </video>
-            <p>Описание третьего видео</p>
-        </div>
+  <div className="video-row">
+    <div className="video-item">
+      <video controls width="100%">
+        <source src="https://res.cloudinary.com/dizmybqfl/video/upload/v1742055663/Download_3_folmdn.mp4" type="video/mp4" />
+      </video>
+      <p>Описание первого видео</p>
     </div>
+    <div className="video-item">
+      <video controls width="100%">
+        <source src="https://res.cloudinary.com/dizmybqfl/video/upload/v1742055653/Download_2_jfkr1p.mp4" type="video/mp4" />
+      </video>
+      <p>Описание второго видео</p>
+    </div>
+    <div className="video-item">
+      <video controls width="100%">
+        <source src="https://res.cloudinary.com/dizmybqfl/video/upload/v1742055647/Download_1_crzg24.mp4" type="video/mp4" />
+      </video>
+      <p>Описание третьего видео</p>
+    </div>
+  </div>
 
-    {/* Второй ряд с тремя видео */}
-    <div className="video-row">
-        <div className="video-item">
-            <video controls width="100%">
-                <source src="https://res.cloudinary.com/dizmybqfl/video/upload/v1742056534/Download_4_jcv87d.mp4" type="video/mp4" />
-            </video>
-            <p>They dont know me son, Stay Hard, Nobody work like me in this house </p>
-        </div>
-        <div className="video-item">
-            <video controls width="100%">
-                <source src="https://res.cloudinary.com/dizmybqfl/video/upload/v1742057683/Download_5_iwjwzb.mp4" type="video/mp4" />
-            </video>
-            <p>Описание пятого видео</p>
-        </div>
-        <div className="video-item">
-            <video controls width="100%">
-                <source src="https://res.cloudinary.com/dizmybqfl/video/upload/v1742057682/Download_6_w6zvah.mp4" type="video/mp4" />
-            </video>
-            <p>Описание шестого видео</p>
-        </div>
+  <div className="video-row">
+    <div className="video-item">
+      <video controls width="100%">
+        <source src="https://res.cloudinary.com/dizmybqfl/video/upload/v1742056534/Download_4_jcv87d.mp4" type="video/mp4" />
+      </video>
+      <p>They dont know me son, Stay Hard, Nobody work like me in this house</p>
     </div>
+    <div className="video-item">
+      <video controls width="100%">
+        <source src="https://res.cloudinary.com/dizmybqfl/video/upload/v1742057683/Download_5_iwjwzb.mp4" type="video/mp4" />
+      </video>
+      <p>Описание пятого видео</p>
+    </div>
+    <div className="video-item">
+      <video controls width="100%">
+        <source src="https://res.cloudinary.com/dizmybqfl/video/upload/v1742057682/Download_6_w6zvah.mp4" type="video/mp4" />
+      </video>
+      <p>Описание шестого видео</p>
+    </div>
+  </div>
 </section>
+*/}
+
     </div>
   );
 };

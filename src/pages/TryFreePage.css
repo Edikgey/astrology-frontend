@@ -5,6 +5,8 @@
   align-items: center;
   height: 100vh;
   background: rgba(242, 243, 255, 1);
+  font-family: 'Montserrat', sans-serif;
+
 }
 
 /* Поля ввода с белым фоном и черным текстом */

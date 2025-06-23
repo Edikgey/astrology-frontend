@@ -6,7 +6,8 @@
     margin: 0 auto;
     padding: 0;
     text-align: center;
-    font-family: 'Arial', sans-serif;
+    font-family: 'Montserrat', sans-serif;
+
     background-color: #f5f3fe;
 }
 
@@ -14,16 +15,17 @@
 
 /* 🔹 ГЕРОЙ-СЕКЦИЯ */
 .hero-section {
-    background-image: url('../img/unnamed.png'); /* Укажи правильный путь */
-    background-size: cover; /* Растягиваем фон, чтобы он заполнял всю ширину */
-    background-position: center; /* Центрируем */
+    /* Убираем фоновое изображение */
+    background: linear-gradient(135deg, #c8c8c8, #c109d6); /* Градиент от тёмно-синего к фиолетовому */
+
+    background-size: cover;
+    background-position: center;
     background-repeat: no-repeat;
-    background-attachment: scroll; /* Убираем фиксированный фон */
-    
-    width:  100%;
-    
-    min-height: 100vh; /* Высота на весь экран */
-    
+    background-attachment: scroll;
+
+    width: 100%;
+    min-height: 100vh;
+
     display: flex;
     justify-content: center;
     align-items: center;
@@ -31,8 +33,9 @@
     text-align: center;
     padding: 60px 0px;
     margin: 0;
-    overflow: hidden; /* Убираем любые возможные боковые отступы */
+    overflow: hidden;
 }
+
 
 
 
@@ -40,7 +43,7 @@
     
     font-size: 36px;
     font-weight: bold;
-    color:#3d1c56;;
+    color:#7617bf;;
     text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5)
 }
 
@@ -48,7 +51,7 @@
     max-width: 600px;
     margin: 10px auto;
     font-size: 18px;
-    color:#3d1c56;;
+    color:#7617bf;;
     text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5)
 }
 

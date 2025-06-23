@@ -1,10 +1,17 @@
 const BASE_URL = "https://astrologywebapp-production.up.railway.app";
 
+// Вспомогательная функция получения session_token
+function getSessionToken() {
+  let token = localStorage.getItem("session_token");
+  if (!token) {
+    token = crypto.randomUUID();
+    localStorage.setItem("session_token", token);
+  }
+  return token;
+}
+
 /**
  * Запрашивает отправку кода подтверждения на email и пароль
- * @param {string} email
- * @param {string} password
- * @returns {Promise<object>} { message: string }
  */
 export async function requestRegister(email, password) {
   console.log("📤 Отправляем на /auth/request-register:", { email, password });
@@ -16,8 +23,6 @@ export async function requestRegister(email, password) {
   });
 
   const data = await response.json();
-  console.log("📥 Ответ от сервера:", data);
-
   if (!response.ok) {
     const errorMessage = Array.isArray(data.detail)
       ? data.detail.map((d) => d.msg).join(", ")
@@ -31,22 +36,20 @@ export async function requestRegister(email, password) {
 
 /**
  * Подтверждает код и завершает регистрацию (возвращает токен)
- * @param {string} code
- * @param {string} email
- * @param {string} password
- * @returns {Promise<object>} { access_token: string, token_type: string }
  */
 export async function verifyCode(code, email, password) {
+  const sessionToken = getSessionToken();
+
   const response = await fetch(`${BASE_URL}/auth/verify-code?code=${code}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      "X-Session-Token": sessionToken,
     },
     body: JSON.stringify({ email, password }),
   });
 
   const data = await response.json();
-
   if (!response.ok) {
     const errorMessage = Array.isArray(data.detail)
       ? data.detail.map((d) => d.msg).join(", ")
@@ -54,27 +57,30 @@ export async function verifyCode(code, email, password) {
     throw new Error(errorMessage);
   }
 
+  // Удаляем session_token, сохраняем access_token
+  localStorage.removeItem("session_token");
+  localStorage.setItem("access_token", data.access_token);
+
   console.log("✅ Верификация прошла:", data);
   return data;
 }
 
 /**
- * Логин по email и паролю (возвращает токен)
- * @param {string} email
- * @param {string} password
- * @returns {Promise<object>} { access_token: string, token_type: string }
+ * Логин по email и паролю
  */
 export async function login(email, password) {
+  const sessionToken = getSessionToken();
+
   const response = await fetch(`${BASE_URL}/auth/login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      "X-Session-Token": sessionToken,
     },
     body: JSON.stringify({ email, password }),
   });
 
   const data = await response.json();
-
   if (!response.ok) {
     const errorMessage = Array.isArray(data.detail)
       ? data.detail.map((d) => d.msg).join(", ")
@@ -82,14 +88,16 @@ export async function login(email, password) {
     throw new Error(errorMessage);
   }
 
+  // Удаляем session_token, сохраняем access_token
+  localStorage.removeItem("session_token");
+  localStorage.setItem("access_token", data.access_token);
+
   console.log("✅ Вход выполнен:", data);
   return data;
 }
 
 /**
- * Получение текущего пользователя по токену
- * @param {string} token
- * @returns {Promise<object>} { id, email, photoURL (или null) }
+ * Получение текущего пользователя по access_token
  */
 export async function getMe(token) {
   const response = await fetch(`${BASE_URL}/auth/me`, {
@@ -101,18 +109,15 @@ export async function getMe(token) {
   });
 
   const data = await response.json();
-
   if (!response.ok) {
     console.error("❌ Ошибка при получении пользователя:", data);
     throw new Error(data.detail || "Ошибка получения пользователя");
   }
 
   console.log("✅ Пользователь:", data);
-
   return {
     id: data.id,
     email: data.email,
-    photoURL: data.photoURL || null, // 🔁 гарантировано будет либо ссылка, либо null
+    photoURL: data.photoURL || null,
   };
 }
-

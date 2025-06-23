@@ -17,6 +17,7 @@ const AuthorizationPage = () => {
 
   useEffect(() => {
     if (user) {
+      localStorage.removeItem("session_token");
       const redirectPath = localStorage.getItem("redirect_after_login") || "/";
       localStorage.removeItem("redirect_after_login");
       navigate(redirectPath);
@@ -36,12 +37,14 @@ const AuthorizationPage = () => {
     setMessage("");
 
     try {
+      const sessionToken = localStorage.getItem("session_token");
+
       if (!isCodeSent) {
         if (!email.trim() || !password.trim()) {
           setError("Введите email и пароль");
           return;
         }
-        await registerEmail(email, password);
+        await registerEmail(email, password, sessionToken);
         setIsCodeSent(true);
         setMessage("Код отправлен на почту. Введите его ниже для завершения регистрации.");
       } else {
@@ -49,7 +52,7 @@ const AuthorizationPage = () => {
           setError("Введите код из почты");
           return;
         }
-        await verifyRegistration(code, email, password);
+        await verifyRegistration(code, email, password, sessionToken);
         setMessage("Регистрация завершена и выполнен вход.");
       }
     } catch (err) {
@@ -61,7 +64,8 @@ const AuthorizationPage = () => {
     e.preventDefault();
     setError("");
     try {
-      await login(email, password);
+      const sessionToken = localStorage.getItem("session_token");
+      await login(email, password, sessionToken);
       setMessage("Вы успешно вошли.");
     } catch (err) {
       setError(extractErrorMessage(err));

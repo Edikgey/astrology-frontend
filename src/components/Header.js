@@ -12,10 +12,7 @@ const Header = () => {
     <nav className="navbar">
       <div className="nav-left">
         <Link to="/">Главная</Link>
-        <Link to="/pricing">Цены</Link>
-        <Link to="/reviews">Отзывы</Link>
-        <Link to="/reports">Отчеты</Link>
-        <Link to="/tools">Инструменты</Link>
+        
       </div>
 
       <div className="nav-right">
